@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>For Dear</title>
+
+<style>
+  .hint{
+position:absolute;
+bottom:40px;
+left:50%;
+transform:translateX(-50%);
+color:#ff2f92;
+font-size:20px;
+opacity:0;
+transition:0.5s;
+z-index:10;
+}
+
+body{
+<div id="nightSky"></div>
+margin:0;
+background:black;
+overflow:hidden;
+font-family:sans-serif;
+}
+
+/* MATRIX */
+
+canvas{
+position:fixed;
+top:0;
+left:0;
+z-index:0;
+}
+
+/* TIMER */
+
+.timer{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+font-size:120px;
+color:#ff2f92;
+z-index:10;
+}
+
+/* TITLE */
+
+.title{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+font-size:60px;
+color:#ff2f92;
+text-align:center;
+display:none;
+z-index:10;
+}
+
+/* PHOTO */
+
+.photo{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%) scale(0);
+opacity:0;
+width:280px;
+transition:1s;
+border-radius:10px;
+box-shadow:0 20px 40px rgba(0,0,0,.7);
+cursor:pointer;
+}
+
+.photo.show{
+opacity:1;
+transform:translate(-50%,-50%) scale(1);
+}
+
+.photo.heart{
+width:120px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+
+<div id="timer" class="timer">3</div>
+
+<div id="title" class="title">
+<span id="line1"></span><br>
+<span id="line2"></span><br>
+<span id="line3"></span><br>
+<span id="angel"></span>
+</div>
+<div id="hint" class="hint">Click photo to continue</div>
+
+<img src="1.png" class="photo">
+<img src="2.png" class="photo">
+<img src="3.png" class="photo">
+<img src="4.png" class="photo">
+<img src="5.png" class="photo">
+<img src="6.png" class="photo">
+<img src="7.png" class="photo">
+<img src="8.png" class="photo">
+<img src="9.png" class="photo">
+<img src="10.png" class="photo">
+
+<script>
+/* TIMER */
+
+let num = 3
+const timer = document.getElementById("timer")
+
+timer.innerText = num
+
+const interval = setInterval(()=>{
+
+num--
+timer.innerText = num
+
+if(num <= 0){
+
+clearInterval(interval)
+
+setTimeout(()=>{
+
+timer.style.display="none"
+document.getElementById("title").style.display="block"
+
+showText()
+
+},1000)
+
+}
+
+},1000)
+/* PHOTOS */
+
+const photos = document.querySelectorAll(".photo")
+let index = 0
+
+
+const title = document.getElementById("title")
+
+function typeText(text, speed, callback){
+let i = 0
+title.innerHTML = ""
+
+const timer = setInterval(() => {
+title.innerHTML += text.charAt(i)
+i++
+
+if(i >= text.length){
+clearInterval(timer)
+if(callback) callback()
+}
+
+}, speed)
+
+}
+
+function showText(){
+
+// 1 сцена
+typeText("HAPPY WOWEN'S DAY", 100, () => {
+
+setTimeout(() => {
+
+// 2 сцена
+typeText("GULASAL", 100, () => {
+
+setTimeout(() => {
+
+// 3 сцена
+typeText(" MY ASALCHAM", 100, () => {
+
+setTimeout(() => {
+
+// 4 сцена
+typeText("❤️", 200, () => {
+
+setTimeout(()=>{
+startAlbum()
+},2000)
+
+})
+
+},2000)
+
+})
+
+},2000)
+
+})
+
+},2000)
+
+})
+
+}
+
+function startAlbum(){
+
+document.getElementById("title").style.display="none"
+
+document.getElementById("hint").style.opacity = "1"
+
+photos[0].classList.add("show")
+
+}
+
+photos.forEach(photo=>{
+photo.onclick = nextPhoto
+})
+
+function nextPhoto(){
+
+if(index === 0){
+document.getElementById("hint").style.opacity = "0"
+}
+
+photos[index].classList.remove("show")
+
+index++
+
+if(index < photos.length){
+photos[index].classList.add("show")
+}else{
+makeHeart()
+}
+
+}
+/* HEART */
+
+function makeHeart(){
+  
+const heart=[
+
+[-260,-140],
+[-130,-240],
+[0,-280],
+[130,-240],
+[260,-140],
+
+[-210,40],
+[-80,160],
+[80,160],
+[210,40],
+
+[0,260]
+
+]
+photos.forEach((p,i)=>{
+
+p.classList.add("show")
+p.classList.add("heart")
+
+p.style.transform =
+`translate(calc(-50% + ${heart[i][0]}px),
+calc(-50% + ${heart[i][1]}px))`
+
+})
+
+}
+
+</script>
+
+<script>
+
+/* MATRIX */
+
+const canvas=document.getElementById("matrix")
+const ctx=canvas.getContext("2d")
+
+canvas.height=window.innerHeight
+canvas.width=window.innerWidth
+
+const letters="0123456789"
+const fontSize=14
+const columns=canvas.width/fontSize
+
+const drops=[]
+
+for(let x=0;x<columns;x++)
+drops[x]=1
+
+function draw(){
+
+ctx.fillStyle="rgba(0,0,0,0.05)"
+ctx.fillRect(0,0,canvas.width,canvas.height)
+
+ctx.fillStyle="#ff2f92"
+ctx.font=fontSize+"px monospace"
+
+for(let i=0;i<drops.length;i++){
+  const text=letters[Math.floor(Math.random()*letters.length)]
+
+ctx.fillText(text,i*fontSize,drops[i]*fontSize)
+
+if(drops[i]*fontSize>canvas.height && Math.random()>0.975)
+drops[i]=0
+
+drops[i]++
+
+}
+
+}
+
+setInterval(draw,33)
+
+</script>
+
+</body>
+</html>
